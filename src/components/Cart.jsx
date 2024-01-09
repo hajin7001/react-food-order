@@ -16,8 +16,8 @@ export default function Cart({title, onSet}){
   if(cartQuantity > 0){
     modalActions = (
       <>
-        <button>Close</button>
-        <button onClick={onSet}>Go to Checkout</button>
+        <button className="text-button">Close</button>
+        <button onClick={onSet} className="button">Go to Checkout</button>
       </>
     )
   }
@@ -27,17 +27,17 @@ export default function Cart({title, onSet}){
       <h2>{title}</h2>
       {cartQuantity == 0 && <p>No Items in Cart!</p>}
       {cartQuantity > 0 && (
-        <ul className="cart-item">
+        <ul>
           {cartItems.map((item)=>{
             const formattedPrice = `$${item.price}`
             return (
-              <li key={item.id}>
+              <li key={item.id} className="cart-item">
                 <p>{item.name} - {item.quantity} x {formattedPrice}</p>
-                <div className="cart-item-actions">
+                <span className="cart-item-actions">
                   <button onClick={()=>updateItemQuantity(item, -1)}>-</button>
                   <span>{item.quantity}</span>
                   <button onClick={() => updateItemQuantity(item.id, 1)}>+</button>
-                </div>
+                </span>
               </li>
             )
           })}

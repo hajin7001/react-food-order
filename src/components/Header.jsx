@@ -28,7 +28,7 @@ export default function Header(){
           <h1>Food Order App</h1>
         </div>
         <p>
-          <button onClick={handleOpenCartClick}>Cart {cartQuantity}</button>
+          <button onClick={handleOpenCartClick} className='text-button'>Cart {cartQuantity}</button>
         </p>
       </header>
     </>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createContext, useReducer, useEffect } from "react"
 
 export const FoodOrderContext = createContext({
@@ -7,14 +8,12 @@ export const FoodOrderContext = createContext({
   updateItemQuantity: () => {}
 });
 
-let availableItems;
-
 function CartReducer(state, action){
   if(action.type === 'ADD_ITEM'){
     const updatedItems = [...state.cartItems];
 
       const existingCartItemIndex = updatedItems.findIndex(
-        (cartItem) => cartItem.id === action.payload
+        (cartItem) => cartItem.id === action.payload.id
       );
       const existingCartItem = updatedItems[existingCartItemIndex];
 
@@ -25,17 +24,16 @@ function CartReducer(state, action){
         };
         updatedItems[existingCartItemIndex] = updatedItem;
       } else {
-        const product = availableItems.find((product) => product.id === action.payload);
+        const product = action.payload.listedItems.find((product) => product.id === action.payload.id);
         updatedItems.push({
-          id: action.payload,
-          name: product.title,
+          id: action.payload.id,
+          name: product.name,
           price: product.price,
           quantity: 1,
         });
       }
 
       return {
-        ...state, // not needed here because we only have one value 
         cartItems: updatedItems,
       };
   }
@@ -59,7 +57,6 @@ function CartReducer(state, action){
       }
 
       return {
-        ...state,
         cartItems: updatedItems,
       };
   }
@@ -72,11 +69,15 @@ export default function FoodOrderContextProvider({children}){
   const [cartState, cartDispatch] = useReducer(CartReducer, {
     cartItems: []
   });
+  const [listedItems, setListedItems] = useState([]);
 
   function handleAddItemToCart(id) {
     cartDispatch({
       type: 'ADD_ITEM',
-      payload: id
+      payload: {
+        id: id, 
+        listedItems: listedItems
+      }
     });
   }
 
@@ -98,10 +99,11 @@ export default function FoodOrderContextProvider({children}){
         const response = await fetch('http://localhost:3000/meals');
         const resData = await response.json();
         // resData is the list of meals
-        const availableItems = resData;
+        setListedItems(resData);
 
         // 제대로 나옴. 
-        console.log(availableItems);
+        console.log(listedItems);
+        ctxValue.availableItems = listedItems;
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -110,8 +112,9 @@ export default function FoodOrderContextProvider({children}){
     fetchData();
   }, []);
 
+  // 문제는 listedItems가 먼저 들어온다는 것 useEffect의 render보다 
   const ctxValue = {
-    availableItems: availableItems,
+    availableItems: listedItems,
     cartItems: cartState.cartItems,
     addItemsToCart:handleAddItemToCart,
     updateItemQuantity:handleUpdateCartItemQuantity
