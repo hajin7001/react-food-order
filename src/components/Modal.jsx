@@ -9,7 +9,8 @@ const Modal = forwardRef(function Modal({}, ref){
   const dialog = useRef();
   const [cartOrCheckout, setCartOrCheckout] = useState({
     cart: true,
-    checkout: false
+    checkout: false,
+    totalPrice: 0
   });
 
   useImperativeHandle(ref, ()=>{
@@ -20,21 +21,25 @@ const Modal = forwardRef(function Modal({}, ref){
     }
   });
 
-  function handleCartToCheckoutClick(){
+  function handleCartToCheckoutClick(newPrice){
     // 다시 원래대로로 돌려놔야 하지 않나? 
     setCartOrCheckout((prev) => ({
+      ...prev,
       cart: !prev.cart,
-      checkout: !prev.checkout
+      checkout: !prev.checkout,
+      totalPrice: newPrice
     }))
   };
 
-  // children으로 받지 말고 Cart인지 CheckoutForm인지를 여기서 판단 
-  // CheckoutForm에서는 close button을 눌렀을 때 handleCart...
+  // cart에서 구한 totalPrice를 checkoutform으로 넘겨야 한다
+
   return createPortal(
     <dialog className="modal" ref={dialog}>
       {cartOrCheckout.cart ? 
         <Cart onSet={handleCartToCheckoutClick}/> :
-        <CheckoutForm onSet={handleCartToCheckoutClick}/>}
+        <CheckoutForm 
+          onSet={handleCartToCheckoutClick} 
+          totalPrice={cartOrCheckout.totalPrice}/>}
     </dialog>
   , document.getElementById('modal'));
 });

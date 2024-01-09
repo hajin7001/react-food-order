@@ -12,16 +12,17 @@ export default function Cart({title, onSet}){
   const formattedTotalPrice = `$${totalPrice.toFixed(2)}`;
 
 
-  let modalActions = <button>Close</button>;
+  let modalActions = <button className="text-button">Close</button>;
   if(cartQuantity > 0){
     modalActions = (
       <>
         <button className="text-button">Close</button>
-        <button onClick={onSet} className="button">Go to Checkout</button>
+        <button onClick={() => onSet(totalPrice)} className="button">Go to Checkout</button>
       </>
     )
   }
 
+  // 고쳐야 할게 close를 눌렀을 때 close가 되는 것
   return (
     <div className="cart">
       <h2>{title}</h2>
