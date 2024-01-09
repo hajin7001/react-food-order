@@ -1,6 +1,7 @@
 import logoImg from '../assets/logo.jpg';
 import { useRef, useContext } from 'react';
 import Modal from './Modal';
+import Cart from './Cart';
 import { FoodOrderContext } from '../food-order-context';
 
 export default function Header(){
@@ -9,20 +10,27 @@ export default function Header(){
   // modal에 연결하기 cart 누르면 modal이 나오도록 그리고 cart에 있는 go to checkout button 누르면 checkout modal로 연결 
 
   const modal = useRef();
-  const { items } = useContext(FoodOrderContext);
-  const cartQuantity = items.length;
+  const { cartItems } = useContext(FoodOrderContext);
+  const cartQuantity = cartItems.length;
 
   function handleOpenCartClick(){
     modal.current.open();
   }
-  
+
+
   return (
-    <div id="main-header">
-      <div id="title">
-        <img src={logoImg} alt="logo Image" />
-        <h1>Food Order App</h1>
-        <button>Cart</button>
-      </div>
-    </div>
+    <>
+      <Modal ref={modal}/>
+        
+      <header id="main-header">
+        <div id="title">
+          <img src={logoImg} alt="logo Image" />
+          <h1>Food Order App</h1>
+        </div>
+        <p>
+          <button onClick={handleOpenCartClick}>Cart {cartQuantity}</button>
+        </p>
+      </header>
+    </>
   )
 }
